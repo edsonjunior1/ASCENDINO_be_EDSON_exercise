@@ -62,6 +62,17 @@ class MembershipsServiceTest {
 
     @Test
     public void shouldFailToCreateMembershipWhenMembershipsIsNull() {
+        MembershipsService membershipsService = new MembershipsService() {
+            @Override
+            public Membership assignRoleToMembership(Membership membership) throws ResourceNotFoundException {
+                return null;
+            }
+
+            @Override
+            public List<Membership> getMemberships(UUID roleId) {
+                return null;
+            }
+        };
         assertThrows(NullPointerException.class,
                 () -> membershipsService.assignRoleToMembership(null));
     }
