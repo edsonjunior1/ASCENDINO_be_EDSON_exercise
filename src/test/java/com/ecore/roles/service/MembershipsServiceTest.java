@@ -110,7 +110,6 @@ class MembershipsServiceTest {
 
     @Test
     public void shouldFailToGetMembershipsWhenRoleIdIsNull() {
-        UUID roleId = null;
         MembershipsService membershipsService = new MembershipsService() {
             @Override
             public Membership assignRoleToMembership(Membership membership) throws ResourceNotFoundException {
