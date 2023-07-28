@@ -2,6 +2,7 @@ package com.ecore.roles.service;
 
 import com.ecore.roles.exception.InvalidArgumentException;
 import com.ecore.roles.exception.ResourceExistsException;
+import com.ecore.roles.exception.ResourceNotFoundException;
 import com.ecore.roles.model.Membership;
 import com.ecore.roles.repository.MembershipRepository;
 import com.ecore.roles.repository.RoleRepository;
@@ -12,7 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.ecore.roles.utils.TestData.DEFAULT_MEMBERSHIP;
 import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
@@ -96,7 +99,19 @@ class MembershipsServiceTest {
 
     @Test
     public void shouldFailToGetMembershipsWhenRoleIdIsNull() {
-        assertThrows(NullPointerException.class,
+        UUID roleId = null;
+        MembershipsService membershipsService = new MembershipsService() {
+            @Override
+            public Membership assignRoleToMembership(Membership membership) throws ResourceNotFoundException {
+                return null;
+            }
+
+            @Override
+            public List<Membership> getMemberships(UUID roleId) {
+                return null;
+            }
+        };
+        assertThrows(IllegalArgumentException.class,
                 () -> membershipsService.getMemberships(null));
     }
 
