@@ -5,6 +5,7 @@ import com.ecore.roles.model.Role;
 import com.ecore.roles.repository.RoleRepository;
 import com.ecore.roles.utils.RestAssuredHelper;
 import com.ecore.roles.web.dto.RoleDto;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,14 +132,23 @@ public class RolesApiTest {
 
     @Test
     void shouldGetRoleByUserIdAndTeamId() {
-        Membership expectedMembership = DEFAULT_MEMBERSHIP();
+        Membership expectedMembership = Membership.builder()
+                .userId(GIANNI_USER_UUID)
+                .teamId(ORDINARY_CORAL_LYNX_TEAM_UUID)
+                .role(DEVELOPER_ROLE())
+                .build();
+
         mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM());
+
         createMembership(expectedMembership)
                 .statusCode(201);
 
-        getRole(expectedMembership.getUserId(), expectedMembership.getTeamId())
+        RoleDto roleDto = getRole(expectedMembership.getUserId(), expectedMembership.getTeamId())
                 .statusCode(200)
-                .body("name", equalTo(expectedMembership.getRole().getName()));
+                .extract().as(RoleDto.class);
+
+        Assertions.assertNotNull(roleDto);
+        Assertions.assertEquals(DEVELOPER_ROLE().getName(), roleDto.getName());
     }
 
     @Test

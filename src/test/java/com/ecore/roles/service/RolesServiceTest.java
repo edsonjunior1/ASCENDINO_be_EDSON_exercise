@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
 import static com.ecore.roles.utils.TestData.UUID_1;
@@ -70,5 +71,18 @@ class RolesServiceTest {
                 () -> rolesService.GetRole(UUID_1));
 
         assertEquals(format("Role %s not found", UUID_1), exception.getMessage());
+    }
+
+    @Test
+    public void shouldReturnRoleByUserIdAndTeamIdWhenMatchExists() {
+        Role developerRole = DEVELOPER_ROLE();
+        UUID userId = developerRole.getId();
+        UUID teamId = developerRole.getTeamId();
+        when(roleRepository.findByUserIdAndTeamId(userId, teamId)).thenReturn(Optional.of(developerRole));
+
+        Role role = rolesService.getRoleByUserIdAndTeamId(userId, teamId);
+
+        assertNotNull(role);
+        assertEquals(developerRole, role);
     }
 }
